@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package anthos.samples.financedemo.balancereader;
+package anthos.samples.financedemo.transactionhistory;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -35,28 +35,28 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import anthos.samples.financedemo.common.AuthTools;
-import anthos.samples.financedemo.common.data.Balance;
 import anthos.samples.financedemo.common.data.Transaction;
 import anthos.samples.financedemo.common.data.TransactionRepository;
 
 /**
- * Controller for the BalanceReader service.
+ * Controller for the TransactionHistory service.
  *
- * Functions to track the bank balance for each user account.
+ * Functions to show the transaction history for each user account.
  */
 @RestController
-public final class BalanceReaderController {
+public final class TransactionHistoryController {
 
     private static final int POLL_TRANSACTIONS_TIMEOUT = 10;
 
     private final ApplicationContext ctx =
-            new AnnotationConfigApplicationContext(BalanceReaderConfig.class);
+            new AnnotationConfigApplicationContext(
+                    TransactionHistoryConfig.class);
     private final Logger logger =
-            Logger.getLogger(BalanceReaderController.class.getName());
+            Logger.getLogger(TransactionHistoryController.class.getName());
 
     private final String localRoutingNum;
     private final JWTVerifier verifier;
-    private final Map<String, Balance> balances;
+    private final Map<String, TransactionHistoryList> transactionHistory;
     private final TransactionRepository transactionRepository;
     private final Thread backgroundThread;
 
@@ -66,11 +66,12 @@ public final class BalanceReaderController {
      * Opens a connection to the transaction repository for the bank ledger.
      * Starts background thread to poll for new transactions.
      */
-    public BalanceReaderController() {
+    public TransactionHistoryController() {
         this.localRoutingNum = System.getenv("LOCAL_ROUTING_NUM");
         this.verifier =
                 AuthTools.newJWTVerifierFromFile(System.getenv("PUB_KEY_PATH"));
-        this.balances = new HashMap<String, Balance>();
+        this.transactionHistory =
+                new HashMap<String, TransactionHistoryList>();
         this.transactionRepository = new TransactionRepository(
                 ctx.getBean(StatefulRedisConnection.class),
                 System.getenv("LEDGER_STREAM"));
@@ -128,13 +129,14 @@ public final class BalanceReaderController {
     }
 
     /**
-     * Get the account balance for the currently authorized account.
+     * Get the transaction history for the currently authorized account.
      *
-     * @return Balance JSON object if balance was successfully retrieved.
+     * @return TransactionHistoryList JSON object if the account history was
+     *         successfully retrieved.
      */
-    @GetMapping("/get_balance")
+    @GetMapping("/get_history")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> getBalance(
+    public ResponseEntity<?> getTransactions(
             @RequestHeader("Authorization") String bearerToken) {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             bearerToken = bearerToken.split("Bearer ")[1];
@@ -143,10 +145,15 @@ public final class BalanceReaderController {
             DecodedJWT jwt = this.verifier.verify(bearerToken);
             String initiatorAcct = jwt.getClaim("acct").asString();
 
-            // If no balance data for this account, return an empty balance.
-            Balance balance = (balances.containsKey(initiatorAcct)
-                    ? balances.get(initiatorAcct) : new Balance(0));
-            return new ResponseEntity<Balance>(balance, HttpStatus.OK);
+            if (transactionHistory.containsKey(initiatorAcct)) {
+                return new ResponseEntity<TransactionHistoryList>(
+                        transactionHistory.get(initiatorAcct), HttpStatus.OK);
+            } else {
+                // If no history for this account, return an empty history.
+                return new ResponseEntity<TransactionHistoryList>(
+                        new TransactionHistoryList(),
+                        HttpStatus.OK);
+            }
         } catch (JWTVerificationException e) {
             return new ResponseEntity<String>("not authorized",
                     HttpStatus.UNAUTHORIZED);
@@ -155,23 +162,31 @@ public final class BalanceReaderController {
 
     private void processTransaction(Transaction transaction) {
         if (transaction.getFromRoutingNum().equals(localRoutingNum)) {
-            // Subtract amount from FromAccount only if it is a local account.
-            int amount = transaction.getAmount() * -1;
-            adjustBalance(transaction.getFromAccountNum(), amount);
+            TransactionHistoryList.Entry entry =
+                    new TransactionHistoryList.Entry(
+                        TransactionHistoryList.Entry.Type.CREDIT,
+                        transaction.getAmount(),
+                        transaction.getFromAccountNum(),
+                        transaction.getTimestamp());
+            appendTransactionHistoryEntry(entry);
         }
         if (transaction.getToRoutingNum().equals(localRoutingNum)) {
-            // Add amount to ToAccount only if it is a local account.
-            int amount = transaction.getAmount();
-            adjustBalance(transaction.getToAccountNum(), amount);
+            TransactionHistoryList.Entry entry =
+                    new TransactionHistoryList.Entry(
+                        TransactionHistoryList.Entry.Type.DEBIT,
+                        transaction.getAmount(),
+                        transaction.getToAccountNum(),
+                        transaction.getTimestamp());
+            appendTransactionHistoryEntry(entry);
         }
     }
 
-    private void adjustBalance(String account, int amount) {
-        if (balances.containsKey(account)) {
-            Balance balance = balances.get(account);
-            balance.setAmount(balance.getAmount() + amount);
-        } else {
-            balances.put(account, new Balance(amount));
+    private void appendTransactionHistoryEntry(
+                TransactionHistoryList.Entry entry) {
+        String account = entry.getAccount();
+        if (!transactionHistory.containsKey(account)) {
+            transactionHistory.put(account, new TransactionHistoryList());
         }
+        transactionHistory.get(account).addEntry(entry);
     }
 }
