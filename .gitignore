@@ -5,3 +5,4 @@ istio-*
 *.pub
 target/
 .vscode/settings.json
+.project
