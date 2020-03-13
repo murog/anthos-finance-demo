@@ -11,6 +11,30 @@
             "imageRegistry": "gcr.io/sanche-testing-project"
         },
         {
+            "name": "Debug on Kubernetes (frontend)",
+            "type": "cloudcode.kubernetes",
+            "request": "attach",
+            "language": "Python",
+            "debugPort": 3000,
+            "localRoot": "${workspaceFolder}/src/frontend",
+            "remoteRoot": "/frontend",
+            "podSelector": {
+                "app": "frontend"
+            }
+        },
+        {
+            "name": "Debug on Kubernetes (userservice)",
+            "type": "cloudcode.kubernetes",
+            "request": "attach",
+            "language": "Python",
+            "debugPort": 3000,
+            "localRoot": "${workspaceFolder}/src/userservice",
+            "remoteRoot": "/userservice",
+            "podSelector": {
+                "app": "userservice"
+            }
+        },
+        {
             "name": "Debug on Kubernetes (contacts)",
             "type": "cloudcode.kubernetes",
             "request": "attach",
@@ -20,6 +44,42 @@
             "remoteRoot": "/contacts",
             "podSelector": {
                 "app": "contacts"
+            }
+        },
+        {
+            "name": "Debug on Kubernetes (ledgerwriter)",
+            "type": "cloudcode.kubernetes",
+            "request": "attach",
+            "language": "Java",
+            "debugPort": 5005,
+            "localRoot": "${workspaceFolder}/src/ledgerwriter",
+            "remoteRoot": "/ledgerwriter",
+            "podSelector": {
+              "app": "ledgerwriter"
+            }
+        },
+        {
+            "name": "Debug on Kubernetes (balancereader)",
+            "type": "cloudcode.kubernetes",
+            "request": "attach",
+            "language": "Java",
+            "debugPort": 5005,
+            "localRoot": "${workspaceFolder}/src/balancereader",
+            "remoteRoot": "/balancereader",
+            "podSelector": {
+              "app": "balancereader"
+            }
+        },
+        {
+            "name": "Debug on Kubernetes (transactionhistory)",
+            "type": "cloudcode.kubernetes",
+            "request": "attach",
+            "language": "Java",
+            "debugPort": 5005,
+            "localRoot": "${workspaceFolder}/src/transactionhistory",
+            "remoteRoot": "/transactionhistory",
+            "podSelector": {
+              "app": "transactionhistory"
             }
         }
     ]
