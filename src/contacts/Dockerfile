@@ -17,6 +17,9 @@ FROM python:3.8
 # show python logs as they occur
 ENV PYTHONUNBUFFERED=0
 
+# Install ptvsd for debugging
+RUN pip install ptvsd
+
 # get packages
 WORKDIR /contacts
 COPY requirements.txt .
@@ -25,5 +28,4 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt
 # add files into working directory
 COPY *.py .
 
-
-ENTRYPOINT ["python", "/contacts/contacts.py"]
+ENTRYPOINT ["python", "-m", "ptvsd", "--port", "3000", "--host", "0.0.0.0", "/contacts/contacts.py"]

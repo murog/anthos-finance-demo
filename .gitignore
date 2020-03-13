@@ -4,3 +4,4 @@ istio-*
 *.key
 *.pub
 target/
+.vscode/settings.json
