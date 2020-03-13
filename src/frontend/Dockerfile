@@ -13,8 +13,12 @@
 # limitations under the License.
 
 FROM python:2.7-slim
+
 # show python logs as they occur
 ENV PYTHONUNBUFFERED=0
+
+# Install ptvsd for debugging
+RUN pip install ptvsd
 
 # get packages
 WORKDIR /frontend
@@ -27,4 +31,4 @@ COPY templates templates
 COPY *.py .
 
 EXPOSE 5000
-ENTRYPOINT ["python", "/frontend/flask_server.py"]
+ENTRYPOINT ["python", "-m", "ptvsd", "--port", "3000", "--host", "0.0.0.0", "/frontend/flask_server.py"]

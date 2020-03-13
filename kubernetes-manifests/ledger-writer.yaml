@@ -59,6 +59,9 @@ spec:
          # tell Java to obey container memory limits
         - name: JVM_OPTS
           value: "-Xms1G -Xmx1G"
+         # enable Java debugging
+        - name: JAVA_TOOL_OPTIONS
+          value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
         resources:
           requests:
             cpu: 200m
