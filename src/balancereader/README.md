@@ -34,6 +34,8 @@ Implemented in Java with Spring Boot.
   - the path to the JWT signer's public key, mounted as a secret
 - `JVM_OPTS`
   - settings for the JVM. Used to obey container memory limits
+- `JAVA_TOOL_OPTIONS`
+  - Java settings used to enable [remote debugging](https://cloud.google.com/code/docs/vscode/debug)
 
 ### Kubernetes Resources
 
