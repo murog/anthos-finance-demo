@@ -17,5 +17,5 @@ jobs:
           - name: Cypress run
             uses: cypress-io/github-action@v1
             with:
-                start: npm start
+                # start: npm start
                 working-directory: e2e
