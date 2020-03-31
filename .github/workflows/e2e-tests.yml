@@ -6,13 +6,19 @@ on:
 jobs:
   cypress-run:
         runs-on: self-hosted
+        # Docker image with Cypress pre-installed
+        # https://github.com/cypress-io/cypress-docker-images/tree/master/included
+        container: cypress/included:3.8.3
         steps:
-          - name: Checkout
-            uses: actions/checkout@v1
-          # Install NPM dependencies, cache them correctly
-          # and run all Cypress tests
-          - name: Cypress run
-            uses: cypress-io/github-action@v1
-            with:
-                start: npm start
-                working-directory: e2e
+          - uses: actions/checkout@v1
+          - run: cypress run
+        # steps:
+        #   - name: Checkout
+        #     uses: actions/checkout@v1
+        #   # Install NPM dependencies, cache them correctly
+        #   # and run all Cypress tests
+        #   - name: Cypress run
+        #     uses: cypress-io/github-action@v1
+        #     with:
+        #         start: npm start
+        #         working-directory: e2e
