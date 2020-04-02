@@ -4,3 +4,9 @@ istio-*
 *.key
 *.pub
 target/
+
+# Eclipse
+.settings/
+.metadata
+.classpath
+.project
