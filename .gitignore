@@ -4,9 +4,13 @@ istio-*
 *.key
 *.pub
 target/
+.DS_Store
 
 # Eclipse
 .settings/
 .metadata
 .classpath
 .project
+
+# Cypress
+screenshots/
