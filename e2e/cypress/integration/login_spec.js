@@ -49,10 +49,15 @@ describe('Bad Credentials on Form Submission', function() {
     cy.get('form').submit()
   })
 
-  it('given bad credentials, fails', function() {
+  it('fails with alert banner', function() {
     cy.get('#alertBanner').contains(`We can't find that username and password`)
   })
 
+  it('cannot access home page', function() {
+      cy.visit('home')
+      // should be redirected to login
+      cy.url().should('include', '/login')
+  })
 
 })
 
