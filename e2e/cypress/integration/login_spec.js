@@ -37,10 +37,22 @@ describe('Default Credentials on Form Submission', function() {
 })
 
 describe('Bad Credentials on Form Submission', function() {
+  const username = 'baduser'
+  const password = 'badpassword'
 
+  // TODO: move to supportfile
+  beforeEach(function() {
+    cy.visit('login')
+
+    cy.get('input[name=username]').clear().type(username)
+    cy.get('input[name=password]').clear().type(password)
+    cy.get('form').submit()
+  })
 
   it('given bad credentials, fails', function() {
-
+    cy.get('#alertBanner').contains(`We can't find that username and password`)
   })
+
+
 })
 
