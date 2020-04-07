@@ -8,15 +8,11 @@ describe('Default Credentials on Form Submission', function() {
   const username = 'testuser'
   const password = 'password'
   const name = 'Test User'
-  // TODO: this will change
-  const expectedBalance = '$6, 026.20'
+  // TODO: what is correct amount?
+  const expectedBalance = '$6,026.20'
 
   beforeEach(function() {
-    cy.visit('login')
-
-    cy.get('input[name=username]').clear().type(username)
-    cy.get('input[name=password]').clear().type(password)
-    cy.get('form').submit()
+    cy.login(username, password)
   })
 
   it('redirects to home', function() {
@@ -46,20 +42,17 @@ describe('Default Credentials on Form Submission', function() {
 })
 
 describe('Bad Credentials on Form Submission', function() {
-  const username = 'baduser'
-  const password = 'badpassword'
+  const uuid = () => Cypress._.random(0, 1e6)
+  const id = uuid()
+  const username = `baduser-${id}`
+  const password = `badpassword-${id}`
 
-  // TODO: move to supportfile
   beforeEach(function() {
-    cy.visit('login')
-
-    cy.get('input[name=username]').clear().type(username)
-    cy.get('input[name=password]').clear().type(password)
-    cy.get('form').submit()
+    cy.login(username, password)
   })
 
   it('fails with alert banner', function() {
-    cy.get('#alertBanner').contains(`We can't find that username and password`)
+    cy.get('#alertBanner').contains('Login failed.')
   })
 
   it('cannot access home page', function() {
