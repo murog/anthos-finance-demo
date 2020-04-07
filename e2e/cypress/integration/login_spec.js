@@ -8,6 +8,7 @@ describe('Default Credentials on Form Submission', function() {
   const username = 'testuser'
   const password = 'password'
   const name = 'Test User'
+  // TODO: this will change
   const expectedBalance = '$6, 026.20'
 
   beforeEach(function() {
