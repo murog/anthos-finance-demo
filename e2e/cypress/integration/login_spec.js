@@ -35,6 +35,14 @@ describe('Default Credentials on Form Submission', function() {
     cy.get('#current-balance').contains(expectedBalance)
   })
 
+  it('login and signup redirects back to home', function() {
+    cy.visit('login')
+    cy.url().should('include', '/home')
+
+    cy.visit('signup')
+    cy.url().should('include', '/home')
+  })
+
 })
 
 describe('Bad Credentials on Form Submission', function() {
