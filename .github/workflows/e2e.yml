@@ -22,4 +22,4 @@ jobs:
     - name: UI tests
       run: |
         docker run -t -v $PWD/e2e:/e2e -w /e2e --network=host cypress/included:4.3.0
-      sudo rm -rf e2e/cypress/screenshots
+        sudo rm -rf e2e/cypress/screenshots
