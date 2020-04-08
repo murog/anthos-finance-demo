@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cypress run && sudo chmod 777 -R cypress/screenshots
+cypress run && chown 1001 -R cypress/screenshots/
 
 ls -l cypress
