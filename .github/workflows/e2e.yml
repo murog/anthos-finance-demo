@@ -12,9 +12,13 @@ jobs:
   run-tests:
     runs-on: self-hosted
     steps:
+    - uses: actions/checkout@v1
     - name: Port Forward
       run: |
         kubectl port-forward frontend-64756d9945-mbkfw 3000:8080 &
     - name: Ping
       run: |
         curl localhost:3000
+    - name: UI tests
+      run: |
+        docker run -it -v $PWD/e2e:/e2e -w /e2e cypress/included:4.3.0
