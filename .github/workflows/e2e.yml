@@ -1,0 +1,20 @@
+name: "Continuous Integration"
+on:
+  push:
+    # run on pushes to master or release/*
+    branches:
+      - actions/*
+  pull_request:
+    # run on pull requests targeting master
+    branches:
+      - master
+jobs:
+  run-tests:
+    runs-on: self-hosted
+    steps:
+    - name: Port Forward
+      run: |
+        kubectl port-forward frontend-64756d9945-mbkfw 3000:8080
+    - name: Ping
+      run: |
+        curl localhost:3000
