@@ -14,7 +14,7 @@ jobs:
     steps:
     - name: Port Forward
       run: |
-        kubectl port-forward frontend-64756d9945-mbkfw 3000:8080
+        kubectl port-forward frontend-64756d9945-mbkfw 3000:8080 &
     - name: Ping
       run: |
         curl localhost:3000
