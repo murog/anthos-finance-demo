@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cypress run && chmod 777 -R cypress/
+cypress run && sudo chmod 777 -R cypress/screenshots
