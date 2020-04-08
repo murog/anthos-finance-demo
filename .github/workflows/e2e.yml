@@ -21,4 +21,4 @@ jobs:
         curl localhost:3000
     - name: UI tests
       run: |
-        docker run -t -v $PWD/e2e:/e2e -w /e2e --network=host --entrypoint=./e2e/command.sh cypress/included:4.3.0
+        docker run -t -v $PWD/e2e:/e2e -w /e2e --network=host --entrypoint=./command.sh cypress/included:4.3.0
